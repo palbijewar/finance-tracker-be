@@ -4,10 +4,6 @@ const db = require("../db");
 
 const router = express.Router();
 
-/**
- * POST /expenses
- * Body: { amount, description, idempotencyKey }
- */
 router.post("/", (req, res) => {
   const { amount, description, idempotencyKey } = req.body;
 
@@ -17,7 +13,6 @@ router.post("/", (req, res) => {
     });
   }
 
-  // Check if request already processed
   db.get(
     "SELECT * FROM expenses WHERE id = ?",
     [idempotencyKey],
@@ -53,5 +48,20 @@ router.post("/", (req, res) => {
     }
   );
 });
+
+router.get("/", (req, res) => {
+  db.all(
+    "SELECT * FROM expenses ORDER BY created_at DESC",
+    [],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to fetch expenses" });
+      }
+
+      res.json(rows);
+    }
+  );
+});
+
 
 module.exports = router;
