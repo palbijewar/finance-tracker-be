@@ -1,5 +1,5 @@
 const express = require("express");
-const Expense = require("../Models/Expenses");
+const Expense = require("../models/Expenses");
 const { categorizeExpense } = require("../ai");
 
 const router = express.Router();
