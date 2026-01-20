@@ -1,5 +1,9 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const cors = require("cors");
+
 const db = require("./db");
 const expenseRoutes = require("./routes/expenses");
 
@@ -14,7 +18,9 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
