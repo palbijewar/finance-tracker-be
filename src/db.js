@@ -1,35 +1,18 @@
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+const mongoose = require("mongoose");
+require("dotenv").config();
+const MONGO_URI = process.env.MONGO_URI;
 
-const dbPath = path.join(__dirname, "../expenses.db");
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error("Failed to connect to DB", err);
-  } else {
-    console.log("Connected to SQLite database");
+async function connectDB() {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      dbName: "finance-tracker",
+    });
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
   }
-});
+}
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS expenses (
-      id TEXT PRIMARY KEY,
-      amount REAL NOT NULL,
-      description TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  db.run(
-    "ALTER TABLE expenses ADD COLUMN category TEXT",
-    (err) => {
-      if (err) {
-        console.log("Category column already exists");
-      }
-    }
-  );
-});
-
-
-module.exports = db;
+module.exports = connectDB;
